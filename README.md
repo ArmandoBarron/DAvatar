@@ -72,6 +72,17 @@ The console will display the result of the request, which is handled by the summ
 
 
 # Contact info
-- mariana.hinojosa@cinvestav.mx
-- hino.tije@gmail.com
-- github: mariana_hiti
+* Juan Armando Barrón Lugo ([J.Armando Barrón-Lugo](https://orcid.org/my-orcid?orcid=0000-0002-9619-8116))
+* Email: juan.barron@cinvestav.mx, juanbarronlugo@gmail.com
+* GitHub: [@ArmandoBarron](https://github.com/ArmandoBarron)
+* LinkedIn: [@Armando Barrón](https://www.linkedin.com/in/armando-barr%C3%B3n-52298310b) 
+![Linkedin](https://i.stack.imgur.com/gVE0j.png)
+
+# License
+
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0

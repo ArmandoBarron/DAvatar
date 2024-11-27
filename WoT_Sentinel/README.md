@@ -91,18 +91,6 @@ curl -G http://localhost:5001/containers/container_<id_container>/info <br>
 curl -G http://localhost:5001/containers/container_<id_container>/entrypoint <br>
 
 # Contact info
-- juanbarronlugo@gmail.com
-- Juan Armando Barrón Lugo
-* GitHub: [@ArmandoBarron](https://github.com/ArmandoBarron)
-* LinkedIn: [@Armando Barrón](https://www.linkedin.com/in/armando-barr%C3%B3n-52298310b) 
-![Linkedin](https://i.stack.imgur.com/gVE0j.png)
-
-
-# License
-
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
-
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
+- mariana.hinojosa@cinvestav.mx
+- hino.tije@gmail.com
+- github: mariana_hiti
