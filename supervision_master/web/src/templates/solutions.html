@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block head %} {{ super() }} {% endblock %}
+{% block header %} {{ super() }} {% endblock %}
+{% block content %}
+  <!--==========================
+    Intro Section
+  ============================-->
+  <section id="intro2" class="clearfix">
+    <div class="container d-flex h-100">
+      <div class="row justify-content-center align-self-center">
+      </div>
+    </div>
+  </section><!-- #intro -->
+
+<main role="main" id="main">
+  <!--==========================
+    Custom Section
+  ============================-->
+  <section id="custom">
+    <div class="container">
+      <div class="col-md-12">
+        <div class="mt-4 mb-1">
+          <h2><b>Solutions</b></h2>
+          <hr>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered" id="table_solutions">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Components</th>
+                <th scope="col">Options</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal" id="myModal" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="" style="text-align:left; color: #413e66;"><b>Containers</b></h3>
+          <button type="button" class="close" data-dismiss="modal" style= "color:#CF0000;">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="cpu_util" style="text-align:left"></p>
+        </div>
+        <div class="modal-footer">
+          <!-- <a class="record" href="" class="" style="background: #413e66; border: 0; border-radius: 3px; padding: 8px 20px; color: #fff; transition: 0.3s;">Record</a> -->
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</main>
+{% endblock %}
+{% block footer %} {{ super() }} {% endblock %}
+{% block js_imports %} {{ super() }}
+<script src="{{ url_for('static', filename='js/solutions.js') }}"></script>
+{% endblock %}

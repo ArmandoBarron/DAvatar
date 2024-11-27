@@ -1,0 +1,322 @@
+version: '3.4'
+
+services:
+
+  # information dispersal algorithm
+  ida1-s3: 
+    image: 127.0.0.1:5000/ida:ida-m-s3
+    build:
+      context: ../.././
+    tty: true
+    entrypoint: ["python", "run.py", "-r", "10000"]
+    restart: "no"
+    environment:
+      SOL_ID: ${SOL_ID:-1}
+      W_ID: 1
+  ida2-s3: 
+    image: 127.0.0.1:5000/ida:ida-m-s3
+    build:
+      context: ../.././
+    tty: true
+    entrypoint: ["python", "run.py", "-r", "10000"]
+    restart: "no"
+    environment:
+      SOL_ID: ${SOL_ID:-1}
+      W_ID: 2
+  ida3-s3: 
+    image: 127.0.0.1:5000/ida:ida-m-s3
+    build:
+      context: ../.././
+    tty: true
+    entrypoint: ["python", "run.py", "-r", "10000"]
+    restart: "no"
+    environment:
+      SOL_ID: ${SOL_ID:-1}
+      W_ID: 3
+  ida4-s3: 
+    image: 127.0.0.1:5000/ida:ida-m-s3
+    build:
+      context: ../.././
+    tty: true
+    entrypoint: ["python", "run.py", "-r", "10000"]
+    restart: "no"
+    environment:
+      SOL_ID: ${SOL_ID:-1}
+      W_ID: 4
+  ida5-s3: 
+    image: 127.0.0.1:5000/ida:ida-m-s3
+    build:
+      context: ../.././
+    tty: true
+    entrypoint: ["python", "run.py", "-r", "10000"]
+    restart: "no"
+    environment:
+      SOL_ID: ${SOL_ID:-1}
+      W_ID: 5
+  ida6-s3: 
+    image: 127.0.0.1:5000/ida:ida-m-s3
+    build:
+      context: ../.././
+    tty: true
+    entrypoint: ["python", "run.py", "-r", "10000"]
+    restart: "no"
+    environment:
+      SOL_ID: ${SOL_ID:-1}
+      W_ID: 6
+  ida7-s3: 
+    image: 127.0.0.1:5000/ida:ida-m-s3
+    build:
+      context: ../.././
+    tty: true
+    entrypoint: ["python", "run.py", "-r", "10000"]
+    restart: "no"
+    environment:
+      SOL_ID: ${SOL_ID:-1}
+      W_ID: 7
+  ida8-s3: 
+    image: 127.0.0.1:5000/ida:ida-m-s3
+    build:
+      context: ../.././
+    tty: true
+    entrypoint: ["python", "run.py", "-r", "10000"]
+    restart: "no"
+    environment:
+      SOL_ID: ${SOL_ID:-1}
+      W_ID: 8
+  ida9-s3: 
+    image: 127.0.0.1:5000/ida:ida-m-s3
+    build:
+      context: ../.././
+    tty: true
+    entrypoint: ["python", "run.py", "-r", "10000"]
+    restart: "no"
+    environment:
+      SOL_ID: ${SOL_ID:-1}
+      W_ID: 9
+  ida10-s3: 
+    image: 127.0.0.1:5000/ida:ida-m-s3
+    build:
+      context: ../.././
+    tty: true
+    entrypoint: ["python", "run.py", "-r", "10000"]
+    restart: "no"
+    environment:
+      SOL_ID: ${SOL_ID:-1}
+      W_ID: 10
+
+
+x-model-solution:
+  title: sol1c10
+  description: Test with one container
+  structure:
+    - ida1-s3->ida1-s3
+    - ida2-s3->ida2-s3
+    - ida3-s3->ida3-s3
+    - ida4-s3->ida4-s3
+    - ida5-s3->ida5-s3
+    - ida6-s3->ida6-s3
+    - ida7-s3->ida7-s3
+    - ida8-s3->ida8-s3
+    - ida9-s3->ida9-s3
+    - ida10-s3->ida10-s3
+  x-services:
+    ida1-s3:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec
+    ida2-s3:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec
+    ida3-s3:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec
+    ida4-s3:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec
+    ida5-s3:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec
+    ida6-s3:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec
+    ida7-s3:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec
+    ida8-s3:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec
+    ida9-s3:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec
+    ida10-s3:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec

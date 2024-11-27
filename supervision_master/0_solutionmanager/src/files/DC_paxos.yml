@@ -1,0 +1,138 @@
+version: '3'
+
+services:
+
+  proposer1:
+    build:
+      context: ./
+      dockerfile: DF_Paxos
+    entrypoint: ["python3", "paxos_proposer_node.py","-p", "28080", "-i", "148.247.204.83"]
+    volumes:
+      - ./paxos/:/home/
+    ports:
+      - 28080:28080
+    environment:
+      HOST_PORT: 28080
+    restart: always
+    networks: 
+      - cube_global-net
+    links:
+      - acceptor1
+      - acceptor2
+      - acceptor3
+  
+  acceptor1:
+    build:
+      context: ./
+      dockerfile: DF_Paxos
+    entrypoint: ["python3", "paxos_acceptor_node.py","-p", "38080", "-i", "148.247.204.83"]
+    volumes:
+      - ./paxos/:/home/
+    ports:
+      - 38080:38080
+    environment:
+      HOST_PORT: 38080
+    restart: always
+    # depends_on:
+    #   - proposer1
+    links:
+      - learner1
+      - learner2
+      - learner3
+    networks: 
+      - cube_global-net
+  
+  acceptor2:
+    build:
+      context: ./
+      dockerfile: DF_Paxos
+    entrypoint: ["python3", "paxos_acceptor_node.py","-p", "38081", "-i", "148.247.204.83"]
+    volumes:
+      - ./paxos/:/home/
+    ports:
+      - 38081:38081
+    environment:
+      HOST_PORT: 38081
+    restart: always
+    # depends_on:
+    #   - proposer1
+    links:
+      - learner1
+      - learner2
+      - learner3
+
+  acceptor3:
+    build:
+      context: ./
+      dockerfile: DF_Paxos
+    entrypoint: ["python3", "paxos_acceptor_node.py","-p", "38082", "-i", "148.247.204.83"]
+    volumes:
+      - ./paxos/:/home/
+    ports:
+      - 38082:38082
+    environment:
+      HOST_PORT: 38082
+    restart: always
+    # depends_on:
+    #   - proposer1
+    links:
+      - learner1
+      - learner2
+      - learner3
+
+  learner1:
+    build:
+      context: ./
+      dockerfile: DF_Paxos
+    entrypoint: ["python3", "paxos_learner_node.py","-p", "48080", "-i", "148.247.204.83"]
+    volumes:
+      - ./paxos/:/home/
+    ports:
+      - 48080:48080
+    environment:
+      HOST_PORT: 48080
+    restart: always
+    # depends_on:
+    #   - acceptor1
+    #   - acceptor2
+    #   - acceptor3
+    networks: 
+      - cube_global-net
+  
+  learner2:
+    build:
+      context: ./
+      dockerfile: DF_Paxos
+    entrypoint: ["python3", "paxos_learner_node.py","-p", "48081", "-i", "148.247.204.83"]
+    volumes:
+      - ./paxos/:/home/
+    ports:
+      - 48081:48081
+    environment:
+      HOST_PORT: 48081
+    restart: always
+    # depends_on:
+    #   - acceptor1
+    #   - acceptor2
+    #   - acceptor3
+
+  learner3:
+    build:
+      context: ./
+      dockerfile: DF_Paxos
+    entrypoint: ["python3", "paxos_learner_node.py","-p", "48082", "-i", "148.247.204.83"]
+    volumes:
+      - ./paxos/:/home/
+    ports:
+      - 48082:48082
+    environment:
+      HOST_PORT: 48082
+    restart: always
+    # depends_on:
+    #   - acceptor1
+    #   - acceptor2
+    #   - acceptor3
+
+networks: 
+  cube_global-net:
+    external: true

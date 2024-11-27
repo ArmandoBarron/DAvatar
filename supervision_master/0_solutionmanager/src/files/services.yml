@@ -1,0 +1,30 @@
+## YAML Template.
+version: '3'
+services:
+  db:
+    image: wf/st1
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: moviles
+    ports:
+      - "3308:3306"
+    replicas: 1
+  preprocessing:
+    image: wf/st2
+    ports:
+      - "20000:8000"
+    environment:
+      WS_PORT: 10000
+    replicas: 1
+  processing:
+    image: wf/st3
+    ports: 
+      - "60002:5000"
+    replicas: 1
+  exhibition:
+    image: wf/st4
+    ports: 
+      - "9876:80"
+    depends_on:
+      - db
+    replicas: 1

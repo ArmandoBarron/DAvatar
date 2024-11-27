@@ -1,0 +1,50 @@
+## YAML Template.
+version: '3'
+services:
+  db:
+    image: mysql:8.0.2
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: moviles
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./mysqldata:/var/lib/mysql
+    replicas: 1
+  dbclient:
+    image: mysql:8.0.2
+    depends_on:
+      - db
+    command: mysql -u root -p password -hdb moviles
+    replicas: 1
+  preprocessing:
+    image: trestletech/plumber
+    volumes:
+      - "./preprocessing_service:/home/service"
+      - "./data/:/home/dataset"
+    ports:
+      - "20000:8000"
+    environment:
+      WS_PORT: 10000
+    command: '/home/service/api.R'
+    replicas: 3
+  processing:
+    image: python_php_flask:latest
+    volumes: 
+      - "./processing:/var/www/html"
+      - "./json/:/home/dataset"
+    ports: 
+      - "60000:5000"
+    entrypoint:
+      - python
+      - StayPoints4.py
+    replicas: 3
+  exhibition:
+    image: phpmysql
+    volumes: 
+      - "./exhibition:/var/www/html"
+    ports: 
+      - "9876:80"
+    depends_on:
+      - db
+    replicas: 1

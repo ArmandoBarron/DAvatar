@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block head %} {{ super() }} {% endblock %}
+{% block header %} {{ super() }}
+<link href="{{ url_for('static', filename='css/status.css') }}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+  <!--==========================
+    Intro Section
+  ============================-->
+  <section id="intro2" class="clearfix">
+    <div class="container d-flex h-100">
+      <div class="row justify-content-center align-self-center">
+      </div>
+    </div>
+  </section><!-- #intro -->
+
+  <main role="main" id="main">
+    <!--==========================
+      Custom Section
+    ============================-->
+    <section id="custom">
+      <div class="container">
+        <div class="col-md-12">
+          <div class="row mt-4 mb-1 ml-1">
+            <h2><b>Status </b></h2>
+            {% if solution %} 
+              <div class="ml-2" id="solution" data-solution="{{ solution }}"><h2>{{ solution }}</h2></div>
+            {% endif %}
+            <select class="ml-3" id="metric_opt">
+              <option value="0">CPU</option>
+              <option value="2">MEM</option>
+              <option value="1">FS</option>
+              <option value="3">NET</option>
+            </select>
+            <!-- <div class="input-group-prepend">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </div> -->
+          </div>
+          <hr>
+          <!-- more -->
+          {% if solution %} 
+          <svg></svg>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  </main>
+{% endblock %}
+{% block footer %} {{ super() }} {% endblock %}
+{% block js_imports %} {{ super() }}
+<!-- <script src="https://d3js.org/d3.v6.min.js"></script> -->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="{{ url_for('static', filename='js/status.js') }}"></script>
+{% endblock %}

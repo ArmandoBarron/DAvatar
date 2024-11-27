@@ -1,0 +1,11 @@
+FROM python:3.7-slim-buster
+
+WORKDIR /home/ida-code/
+
+# Instalacion de las dependencias de software 
+RUN apt-get update && apt-get install build-essential -y --no-install-recommends && apt-get install nano -y --no-install-recommends 
+
+
+# Se copia el Codigo de las Aplicaciones a la imagen de contenedor
+COPY ./ida-code/ /home/ida-code/
+RUN chmod -R 777 /home/ida-code/ .

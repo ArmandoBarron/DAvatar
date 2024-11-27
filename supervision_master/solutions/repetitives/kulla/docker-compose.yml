@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+
+  k-masterslave: 
+    image: 127.0.0.1:5000/hgreyesa/masterslave
+    build:
+      context: ./
+    tty: true
+    entrypoint: ["bash", "run.sh", "-w", "6", "-c", "0"]
+    restart: "no"
+    # volumes:
+    #   - ./volume/Source:/home/Volume/Source
+    #   - ./volume/Sink:/home/Volume/Sink
+
+x-model-solution:
+  title: kulla-master-slave
+  description: Implements pattern master-slave
+  structure:
+    - k-masterslave->k-masterslave
+  x-services:
+    k-masterslave:
+      description: Kulla master slave
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - w: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Run: 
+          - Execute pipeline
+          - https://kulla.example.com/Run

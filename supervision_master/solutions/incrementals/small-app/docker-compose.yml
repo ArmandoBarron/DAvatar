@@ -1,0 +1,32 @@
+version: '3.4'
+
+services:
+
+  smallapp: 
+    image: fbalderas/smallapp:incremental
+    build:
+      context: ./
+    tty: true
+    entrypoint: ["./bubble","1000-10000-100000"]
+    restart: "no"
+
+x-model-solution:
+  title: small-app
+  description: Solution with one service with a smallapp of bubble short
+  structure:
+    - smallapp->smallapp
+  x-services:
+    smallapp:
+      description: Perform bubble short algoritm to array of random numbers
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 1000
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - array: array
+      functions:
+        short: 
+          - short array of n numbers
+          - https://smallapp.example.com/short

@@ -1,0 +1,25 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    expose:
+      - 27017
+  movies:
+    image: 127.0.0.1:5000/movies:v1
+    expose:
+      - 5000
+    environment:
+      MONGO_DB: mongo
+    depends_on:
+      - mongo
+    # links:
+      # - mongo
+      # - frontend
+  frontend:
+    image: 127.0.0.1:5000/frontend:v1
+    ports:
+      - 8075:80
+    depends_on:
+      - movies
+    environment:
+      MOVIES: movies 

@@ -1,0 +1,27 @@
+# Execution command: LOCALHOST=192.168.0.7 docker-compose up -d
+version: '3'
+
+services:
+  api-sc:
+    build:
+      context: .
+    tty: true
+    command: python api-studycase.py
+    restart: always
+    volumes:
+      - ./:/home
+    ports:
+      - 54351:5000
+      # - 52011:5000
+      # - 5001:5000
+    environment:
+      LOCALHOST: ${LOCALHOST:-148.247.202.72}
+      # LOCALPORT: 5200
+
+#networks: 
+#  default: 
+#    external: 
+#        name: wot_net
+      
+
+      

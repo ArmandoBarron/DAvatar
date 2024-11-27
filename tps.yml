@@ -1,0 +1,132 @@
+version: '3'
+services:
+  tps_manager: #API Gatewaey THE MANAGER
+    container_name: tps_manager
+    build:
+      context: ./TPS/Manager/
+      dockerfile: ./Dockerfile
+    environment:      
+      CONFIGPATH: ./CONFIG/ #configuration location
+      SCHEMAPATH: ./SCHEMA/ #data location
+      DATABASE: mongodb #database
+      CENTINEL: none #master watcher (must be active)
+    volumes:
+      - ./TPS/Manager/:/home/ #for debugging
+      - ./TPS/:/home/CONFIG/
+      #- ./TEST/:/home/SCHEMA/
+      #- /tmp/pruebas/TPSSCHEMA/:/home/SCHEMA/ #workflow dagon schema
+    ports:
+      - "54350:5000"
+    expose:
+      - "5000"
+    restart: always
+    networks:
+      - TPS_net
+
+  mongodb: # tps manager mongoDB
+    container_name: tps_db_data
+    image: mongo:4.4
+    restart: always
+    environment:
+      data-volume: /data/db
+      MONGO_INITDB_DATABASE: TPS_Data
+    volumes:
+      - data-volume:/data/db
+      #- ./Configuration/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    ports:
+      - 27018:27017
+    networks:
+      - TPS_net
+    depends_on:
+      - tps_manager
+
+####################### SERVICES ######################
+  clustering: # API Gateway container
+    container_name: tps_clustering
+    #image: 127.0.0.1:5000/meteots_clustering_w1
+    build:
+      context: ./TPS/Services/Clustering
+      dockerfile: ./Dockerfile
+    networks:
+      - TPS_net
+    ports:
+      - 11001:80
+    restart: always
+
+  summary: # summary
+    container_name: tps_summary
+    build:
+      context: ./TPS/Services/Summary/
+      dockerfile: ./Dockerfile
+    restart: always
+    networks:
+      - TPS_net
+    ports:
+      - 11002:80
+    depends_on:
+      - tps_manager
+
+#  mlpnn: # multi layer perceptron
+#    container_name: tps_mlpnn
+#    build:
+#      context: ./TPS/Services/MLPNN/
+#      dockerfile: ./Dockerfile
+#    restart: always
+#    networks:
+#      - TPS_net
+#    ports:
+#      - 11004:80
+#    depends_on:
+#      - tps_manager
+
+
+  clusteringtools: # tools
+    container_name: tps_clustering_tools
+    build:
+      context: ./TPS/Services/Summary/
+      dockerfile: ./Dockerfile
+#      context: ./TPS/Services/ClusterAnalysis/
+#      dockerfile: ./Dockerfile
+    restart: always
+    networks:
+      - TPS_net
+    ports:
+      - 3131:80
+    depends_on:
+      - tps_manager
+
+  cleaningtools: # tools to clean data
+    container_name: tps_cleaning_tools
+
+    #image: 127.0.0.1:5000/TPS_cleaning_tools
+    build:
+      context: ./TPS/Services/CleaningTools
+      dockerfile: ./Dockerfile
+    networks:
+      - TPS_net
+    ports:
+      - 11003:80
+    restart: always
+
+  graphics: # service to graphic data
+    container_name: tps_graphics
+    #image: 127.0.0.1:5000/TPS_cleaning_tools
+    build:
+      context: ./TPS/Services/Summary/
+      dockerfile: ./Dockerfile
+#      context: ./TPS/Services/Graficas
+#      dockerfile: ./Dockerfile
+    networks:
+      - TPS_net
+    ports:
+      - 3132:80
+    restart: always
+
+
+networks: 
+  TPS_net:
+
+volumes:
+  data-volume:
+  dagsink-db-volume:
+  dagonservice-db-volume:

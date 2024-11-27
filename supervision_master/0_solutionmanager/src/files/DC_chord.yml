@@ -1,0 +1,139 @@
+version: '3'
+
+services:
+  
+  node1:
+    build:
+      context: ./
+      dockerfile: DF_Chord
+    entrypoint: ["python3", "chord_node.py","-p", "58081", "-i", "148.247.204.83"]
+    volumes:
+      - ./chord/:/home/
+    ports:
+      - 58081:58081
+    environment:
+      HOST_PORT: 58081
+    restart: always
+    # depends_on:
+    #   - node1
+    links:
+      - node2
+
+  node2:
+    build:
+      context: ./
+      dockerfile: DF_Chord
+    entrypoint: ["python3", "chord_node.py","-p", "58082", "-i", "148.247.204.83"]
+    volumes:
+      - ./chord/:/home/
+    ports:
+      - 58082:58082
+    environment:
+      HOST_PORT: 58082
+    restart: always
+    # depends_on:
+    #   - node1
+    links:
+      - node3
+  
+  node3:
+    build:
+      context: ./
+      dockerfile: DF_Chord
+    entrypoint: ["python3", "chord_node.py","-p", "58083", "-i", "148.247.204.83"]
+    volumes:
+      - ./chord/:/home/
+    ports:
+      - 58083:58083
+    environment:
+      HOST_PORT: 58083
+    restart: always
+    # depends_on:
+    #   - node1
+    links:
+      - node4
+  
+  node4:
+    build:
+      context: ./
+      dockerfile: DF_Chord
+    entrypoint: ["python3", "chord_node.py","-p", "58084", "-i", "148.247.204.83"]
+    volumes:
+      - ./chord/:/home/
+    ports:
+      - 58084:58084
+    environment:
+      HOST_PORT: 58084
+    restart: always
+    # depends_on:
+    #   - node1
+    links:
+      - node5
+  
+  node5:
+    build:
+      context: ./
+      dockerfile: DF_Chord
+    entrypoint: ["python3", "chord_node.py","-p", "58085", "-i", "148.247.204.83"]
+    volumes:
+      - ./chord/:/home/
+    ports:
+      - 58085:58085
+    environment:
+      HOST_PORT: 58085
+    restart: always
+    # depends_on:
+    #   - node1
+    links:
+      - node6
+  
+  node6:
+    build:
+      context: ./
+      dockerfile: DF_Chord
+    entrypoint: ["python3", "chord_node.py","-p", "58086", "-i", "148.247.204.83"]
+    volumes:
+      - ./chord/:/home/
+    ports:
+      - 58086:58086
+    environment:
+      HOST_PORT: 58086
+    restart: always
+    # depends_on:
+    #   - node1
+    links:
+      - node7
+  
+  node7:
+    build:
+      context: ./
+      dockerfile: DF_Chord
+    entrypoint: ["python3", "chord_node.py","-p", "58087", "-i", "148.247.204.83"]
+    volumes:
+      - ./chord/:/home/
+    ports:
+      - 58087:58087
+    environment:
+      HOST_PORT: 58087
+    restart: always
+    # depends_on:
+    #   - node1
+    links:
+      - node8
+  
+  node8:
+    build:
+      context: ./
+      dockerfile: DF_Chord
+    entrypoint: ["python3", "chord_node.py","-p", "58088", "-i", "148.247.204.83"]
+    volumes:
+      - ./chord/:/home/
+    ports:
+      - 58088:58088
+    environment:
+      HOST_PORT: 58088
+    restart: always
+    # depends_on:
+    #   - node1
+    links:
+      - node1

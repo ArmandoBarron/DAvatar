@@ -1,0 +1,8 @@
+flask>=1.0.3
+flask_restful>=0.3.5
+argparse>=1.4.0
+requests>=2.22.0
+pyyaml>=4.2
+pymongo>=3.9.0
+graphviz>=0.12
+# python-bsonjs #does not work

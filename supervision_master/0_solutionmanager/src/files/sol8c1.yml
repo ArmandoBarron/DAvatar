@@ -1,0 +1,44 @@
+version: '3.4'
+
+services:
+
+  # information dispersal algorithm
+  s8ida1: 
+    image: fbalderas/ida:ida-m-s8
+    build:
+      context: ../.././
+    tty: true
+    entrypoint: ["python", "run.py", "-r", "10000"]
+    restart: "no"
+    environment:
+      W_ID: 1
+      SOL_ID: ${SOL_ID:-1}
+
+
+
+x-model-solution:
+  title: sol1c1
+  description: Test with one container
+  structure:
+    - s8ida1->s8ida1
+  x-services:
+    s8ida1:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec

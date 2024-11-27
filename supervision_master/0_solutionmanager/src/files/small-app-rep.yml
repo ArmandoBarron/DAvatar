@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+
+  smallapp-rep:
+    image: fbalderas/smallapp
+    build:
+      context: ./
+    tty: true
+    entrypoint: ["./bubble","10000","2", "100"]
+    # entrypoint: ["./bubble","1000-10000-100000","2"]
+    restart: "no"
+
+

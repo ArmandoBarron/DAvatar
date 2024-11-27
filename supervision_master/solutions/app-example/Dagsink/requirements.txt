@@ -1,0 +1,9 @@
+pymongo
+Flask
+Flask-Login
+Flask-Session
+Flask_SocketIO
+itsdangerous
+python-engineio
+python-socketio
+flask-restful

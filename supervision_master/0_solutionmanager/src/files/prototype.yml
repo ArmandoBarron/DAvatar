@@ -1,0 +1,171 @@
+version: '3'
+
+networks: 
+  global-net:
+    driver: bridge
+
+volumes:
+  db-data: {}
+  mongo-config: {}
+
+services:
+
+  datacube:
+    image: mongo:4.2.3
+    volumes:
+      - db-data:/data/db
+      - mongo-config:/data/configdb
+    ports:
+      - 27018:27017
+    expose:
+      - 27017
+    restart: always
+    networks: 
+      - global-net
+  
+  solution_mgr:
+    build:
+      context: ./0_solutionmanager
+      # dockerfile: DF_Monitoring
+    # image: fbalderasd/python:3.7-sb
+    tty: true
+    command: python run.py
+    restart: always
+    volumes:
+      - ./0_solutionmanager/src:/home
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+      - 22010:5000
+    environment:
+      INDEXING_HOST: indexing
+      INDEXING_PORT: 5000
+      MONITORING_HOST: monitoring
+      MONITORING_PORT: 5000
+      REPRESENTATION_HOST: representation
+      REPRESENTATION_PORT: 5000
+    depends_on:
+      - indexing
+    networks: 
+      - global-net
+
+  monitoring:
+    build:
+      context: ./1_monitoring
+    tty: true
+    command: python run.py
+    restart: always
+    volumes:
+      - ./1_monitoring/src:/home
+    ports:
+      - 22001:5000
+    environment:
+      INDEXING_HOST: indexing
+      INDEXING_PORT: 5000
+      MONITORING_HOST: 127.0.0.1
+      MONITORING_PORT: 22001
+      SOLUTION_MGR_HOST: solution_mgr
+      SOLUTION_MGR_PORT: 5000
+      # LOCALHOST: gamma.tamps.cinvestav.mx
+      LOCALHOST: 192.168.0.20 # change to your local ip
+      LOCALHOST_ID: 0
+    depends_on:
+      - indexing
+    networks: 
+      - global-net
+
+  indexing:
+    build:
+      context: ./2_indexing
+    tty: true
+    command: python run.py
+    restart: always
+    volumes:
+      - ./2_indexing/src:/home
+    ports:
+      - 22002:5000
+    environment:
+      DB_HOST: datacube
+      DB_PORT: 27017
+    depends_on:
+      - datacube
+    networks: 
+      - global-net
+
+  representation:
+    build:
+      context: ./3_representation
+    tty: true
+    command: python run.py
+    restart: always
+    volumes:
+      - ./3_representation/src:/home
+    ports:
+      - 22003:5000
+    environment:
+      INDEXING_HOST: indexing
+      INDEXING_PORT: 5000
+    depends_on:
+      - indexing
+    networks: 
+      - global-net
+  
+  diagnosis:
+    build:
+      context: ./4_diagnosis
+    tty: true
+    command: python run.py
+    restart: always
+    volumes:
+      - ./4_diagnosis/src:/home
+    ports:
+      - 22004:5000
+    environment:
+      INDEXING_HOST: indexing
+      INDEXING_PORT: 5000
+      # to work local
+      DB_HOST: datacube
+      DB_PORT: 27017
+      # to work outside the server
+      # DB_HOST: gamma.tamps.cinvestav.mx
+      # DB_PORT: 27018
+    depends_on:
+      - datacube
+    networks: 
+      - global-net
+
+  web:
+    build:
+      context: ./web
+    tty: true
+    command: python run.py
+    restart: always
+    ports:
+      - 22000:5000
+    volumes:
+      - ./web/src:/home
+    depends_on:
+      - indexing
+    networks: 
+      - global-net
+
+
+
+
+  
+  # TEMPORARY: to do some experiments
+  # consumer:
+  #   build:
+  #     context: ./consumer
+  #   tty: true
+  #   command: python run.py
+  #   restart: always
+  #   volumes:
+  #     - ./consumer/src:/home
+  #   ports:
+  #     - 22011:5000
+  #   environment:
+  #     METEO_HOST: gamma.tamps.cinvestav.mx
+  #     METEO_PORT: 5200
+  #   networks: 
+  #     - global-net
+      

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block head %} {{ super() }} {% endblock %}
+{% block header %} {{ super() }} {% endblock %}
+{% block content %}
+  <!--==========================
+    Intro Section
+  ============================-->
+  <section id="intro2" class="clearfix">
+    <div class="container d-flex h-100">
+      <div class="row justify-content-center align-self-center">
+      </div>
+    </div>
+  </section><!-- #intro -->
+
+<main role="main" id="main">
+  <!--==========================
+    Custom Section
+  ============================-->
+  <section id="custom">
+    <div class="container">
+      
+      <div class="mt-4 mb-1">
+        <h2><b>New Solution</b></h2>
+        <hr>
+      </div>
+      <div class="row">
+        <div class="col col-md-6">
+          <div class="row">
+            <form enctype="multipart/form-data" method="POST" name="myform">
+              <div class="d-flex">
+                <div class="input-group-sm m-2 p-2 shadow-sm bg-light">
+                  <label for="ymlFile">Choose .yml file</label>
+                  <input type="file" class="form-control-file" id="ymlFile" name="ymlFile">
+                </div>
+                <button class="btn btn-primary my-2" type="submit">Upload</button>
+              </div>
+            </form>
+          </div>
+          <div id="form-response"></div>
+        </div>
+        <div class="col col-md-5">
+          <div class="input-group-sm">
+            <label for="monitor_interval">Monitor interval (seconds)</label>
+            <select class="form-control" id="monitor_interval" required>
+              <option>3</option>
+              <option>5</option>
+              <option>10</option>
+            </select>
+          </div>
+          <div class="input-group-sm">
+            <label for="aggregates_interval">Aggregates interval (seconds) </label>
+            <input class="form-control" type="number" id="aggregates_interval" 
+              placeholder="Aggregates interval" value="20" autocomplete="off"
+              min="20" max="1200" pattern="[0-9.]+$" required
+              onchange="checkValidity(event)" oninput="setCustomValidity('')">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+{% endblock %}
+{% block footer %} {{ super() }} {% endblock %}
+{% block js_imports %} {{ super() }}
+<script src="{{ url_for('static', filename='js/new-solution.js') }}"></script>
+{% endblock %}

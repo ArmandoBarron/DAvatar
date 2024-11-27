@@ -1,0 +1,44 @@
+version: '3'
+services:
+  acquisition:
+    image: alfredobarron/simulator_web
+    restart: always
+    expose:
+      - "45000"
+    ports:
+      - 4701:45000
+    volumes:
+      - ./acquisition/app:/home/
+    tty: true
+    command: python run.py 45000    
+  analysis:
+    image: alfredobarron/simulator_web
+    restart: always
+    expose:
+      - "45000"
+    volumes:
+      - ./analysis/app:/home/
+    tty: true
+    command: python run.py 45000    
+  creation:
+    image: alfredobarron/simulator_web
+    restart: always
+    expose:
+      - "45000"
+    volumes:
+      - ./creation/app:/home/
+    tty: true
+    command: python run.py 45000
+  web:
+    image: alfredobarron/simulator_web
+    restart: always
+    ports:
+      - 4700:45000
+    volumes:
+      - ./web/app:/home/
+    tty: true
+    command: python run.py 45000    
+    depends_on:
+      - acquisition
+      - analysis
+      - creation

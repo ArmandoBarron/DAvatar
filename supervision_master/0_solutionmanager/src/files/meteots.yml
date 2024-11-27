@@ -1,0 +1,115 @@
+version: '3'
+services:
+
+  clustering_w1: # API Gateway container
+    image: 127.0.0.1:5000/meteots_clustering_w1
+    build:
+      context: ./Rservices/Generic_Cluster
+      dockerfile: ./Dockerfile
+    networks:
+      - meteo_aas_net
+    ports:
+      - "9000:80"
+    restart: always
+    depends_on:
+      - meteo_service
+  clustering_w2: # API summary
+    image: 127.0.0.1:5000/meteots_clustering_w2
+    build:
+      context: ./Rservices/Generic_Cluster
+      dockerfile: ./Dockerfile
+    networks:
+      - meteo_aas_net
+    ports:
+      - "9001:80"
+    restart: always
+    depends_on:
+      - meteo_service
+  summary: # API summary
+    image: 127.0.0.1:5000/meteots_summary
+    build:
+      context: ./Rservices/Summary
+      dockerfile: ./Dockerfile
+    networks:
+      - meteo_aas_net
+    ports:
+      - "3030:8000"
+    volumes:
+      -  ./static/:/home/volumen/
+    restart: always
+    depends_on:
+      - meteo_service
+  graficas_estacion: # graphs by station
+    image: 127.0.0.1:5000/meteots_graficas_estacion
+    build:
+      context: ./Rservices/Graficas
+      dockerfile: ./Dockerfile
+    ports:
+      - "5500:5500"
+    volumes:
+      - ./static/:/home/volumen/
+    restart: always
+    depends_on:
+      - meteo_service
+    deploy: 
+      placement: 
+        constraints: 
+          - node.role == manager
+  graficas_fechas: # graphs by dates
+    image: 127.0.0.1:5000/meteots_graficas_fechas
+    build:
+      context: ./Rservices/Graficas
+      dockerfile: ./Dockerfile
+    ports:
+      - "5501:5500"
+    volumes:
+      - ./static/:/home/volumen/
+    restart: always
+    depends_on:
+      - meteo_service
+    deploy: 
+      placement: 
+        constraints: 
+          - node.role == manager
+  meteo_service: # ------------- MANAGER ---------------
+    image: 127.0.0.1:5000/meteots_meteo_service
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./static:/home/static/
+    networks:
+      - meteo_aas_net
+    ports:
+      - "5200:5200"
+    restart: always
+    deploy: 
+      placement: 
+        constraints: 
+          - node.role == manager
+  # mongo: #shapes database
+  #   image: mongo
+  #   restart: always
+  #   expose:
+  #     - "27017/tcp"
+  #   ports:
+  #     - 27017:27017
+  #   volumes:
+  #     - mongodbdata:/data/db
+  # metadata: #shapes
+  #   image: 127.0.0.1:5000/meteots_metadata
+  #   build:
+  #     context: ./Rservices/MongoDB/metadata
+  #     dockerfile: ./Dockerfile
+  #   ports:
+  #     - 5505:5000
+  #   environment:
+  #     MONGO_DB: mongo
+  #   depends_on:
+  #     - mongo
+
+networks: 
+  meteo_aas_net:
+      
+volumes:
+  mongodbdata:

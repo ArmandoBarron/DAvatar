@@ -1,0 +1,54 @@
+# macOS files
+.DS_Store
+
+# KDE Folder Parameters file
+.directory
+
+# __pycache__ files
+*.pyc
+
+# Ignore IDE specific files
+.vscode/
+
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+
+# temporal files
+.~*
+
+# these content are recreated automatically
+solutions/meteots/static/
+solutions/matrix-1-10-100/ida-code/input/
+solutions/matrix-1-10-100/ida-code/output/
+solutions/repetitives/ida/Code/files/
+solutions/repetitives/ida/Code/files_recovered/
+solutions/repetitives/kulla/Volume/
+solutions/repetitives/kulla/MasterSlave/Volume/
+solutions/incrementals/ida/Code/files/
+solutions/incrementals/ida/Code/files_recovered/
+solutions/concurrents/ida/Code/files/
+solutions/concurrents/ida/Code/files_recovered/
+solutions/ida/Code/files/
+
+# tps
+solutions/tps-manager/TPS/Manager/SCHEMA/
+solutions/tps-manager/STUDY-CASE/data_dump.tar.gz
+solutions/tps-manager/STUDY-CASE/Pollutants-plots
+solutions/tps-manager/STUDY-CASE/Pollutants-clust
+solutions/tps-manager/STUDY-CASE/log1-load.txt
+solutions/tps-manager/STUDY-CASE/log2-join.txt
+
+# these logs can increase a lot
+0_solutionmanager/src/logs/
+1_monitoring/src/logs/
+2_indexing/src/logs/
+3_representation/src/logs/
+4_diagnosis/src/logs/
+
+# path to save datasets
+3_representation/src/sink/
+4_diagnosis/src/datasets/

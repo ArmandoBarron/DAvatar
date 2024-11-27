@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% block head %} {% include 'head.html' %} {% endblock %}
+</head>
+
+<body>
+
+  <!-- header -->
+  {% block header %} {% include 'header.html' %} {% endblock %}
+
+  <!-- content: to add information -->
+  {% block content %}{% endblock %}
+
+  <!-- footer -->
+  {% block footer %} {% include 'footer.html' %} {% endblock %}
+  
+  <!-- js_imports -->
+  {% block js_imports %} {% include 'js_imports.html' %} {% endblock %}
+
+</body>
+
+</html>

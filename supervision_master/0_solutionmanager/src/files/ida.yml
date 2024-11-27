@@ -1,0 +1,50 @@
+version: '3.4'
+
+services:
+
+  # information dispersal algorithm
+  ida: 
+    image: 127.0.0.1:5000/ida:ida
+    build:
+      context: ./
+      dockerfile: ./DF_IDA
+    #container_name: ida_ida
+    tty: true
+    entrypoint: ["python", "run.py"]
+    restart: unless-stopped
+    #volumes:
+      #- ./files_recovered/:/home/Code/files_recovered/
+    networks:
+      - ida_net
+
+networks: 
+  ida_net:
+    # uncomment to deploy on swarm
+    # driver: overlay
+
+x-model-solution:
+  title: sol1c1
+  description: Test with one container
+  structure:
+    - ida->ida
+  x-services:
+    ida:
+      description: Information Dispersal Algorithm
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - n: 8
+          - m: 4
+          - field: 8
+          - folder: input/
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - folder: output/
+      functions:
+        Dis: 
+          - Disperse a file in n chunks
+          - https://myida.example.com/Dis
+        Rec: 
+          - Recover a file by its m chunks
+          - https://myida.example.com/Rec

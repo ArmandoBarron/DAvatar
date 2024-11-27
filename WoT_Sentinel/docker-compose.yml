@@ -1,0 +1,92 @@
+version: '3'
+services:
+  mysql-db:
+    image: mysql
+    container_name: db_service
+    volumes:
+      - 'mysql-db-data:/var/lib/mysql'
+      - "./db/scheme_info.sql:/docker-entrypoint-initdb.d/database.sql"
+    restart: always
+    ports:
+      - "33061:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      
+  web_service:
+    build: ./endpoint_user/Docker
+    image: web_service_img
+    container_name: web_service
+    volumes:
+      - ./endpoint_user:/var/www/html/
+    depends_on:
+      - mysql-db
+    ports:
+      - "8000:80"
+      - "8001:5000"
+    restart: always
+  
+  endpoint_service:
+    build: ./endpoint_device/Docker
+    image: endpoint_service_img
+    container_name: endpoint_service
+    volumes:
+      - ./endpoint_device:/home/app
+    ports:
+      - "5001:5000"
+    depends_on:
+      - mysql-db
+    environment:
+      LOCALHOST: ${IP_HOST:-148.247.204.153}
+    #entrypoint: ["app/docker-entrypoint.sh"]
+    entrypoint: ["python3", "app/endpoint_run.py"]
+    restart: always
+  
+volumes:
+  mysql-db-data:
+
+networks: 
+  default: 
+    external: 
+      name: wot_net 
+
+#correr el listener en segundo plano:
+# nohup python3 listener_run.py &
+# nohup python3 endpoint/endpoint_WoT.py &
+# ps ax | grep listener_run.py   (find PID)
+# kill PID
+
+# pkill -f listener_run.py
+
+
+#docker run -d -p 33061:3306 --name mysql-db  -e MYSQL_ROOT_PASSWORD=secret --mount src=mysql-db-data,dst=/var/lib/mysql --restart always mysql
+#docker exec -it db_service mysql -p
+
+#docker exec db_service /usr/bin/mysqldump -u root --password=secret scheme_info > scheme_info2.sql
+#pass: secret
+
+#docker exec db_service /usr/bin/mysqldump -u root --password=root DATABASE > backup.sql
+
+  #listener_service:
+  #  image: listener_service_img
+  #  container_name: listener_service
+  #  volumes:
+  #     - ./listener:/home
+  #  ports:
+  #     - "5050:50"
+  #  restart: always
+  #  entrypoint: ["python3", "run.py"]
+
+
+  #EJEMPLOS DE PETICIONES a TPS
+  #cleaning tools:  
+  #curl --header "Content-Type:application/json" --request POST --data '{"columns":"all","ReplaceWithNa":['None',-99,-99.0,'NaN','nan'],"DropNa":None,"NaReaplace":"interpolate"}' http://localhost:11003/cleaning/basic
+  #curl --header "Content-Type:application/json" --request POST --data '{"id_vars":['FECHA','HORA'],"var_name":"stations","value_name":"CO"}' http://localhost:11003/transform/melt
+  #curl --header "Content-Type:application/json" --request POST --data '{"id_vars":['FECHA','HORA'],"var_name":"stations","value_name":"CO"}' POST http://localhost:11003/transform/group
+  
+  
+  
+  
+  
+  #curl -G http://localhost:6000/containers/container_4d663bc16903
+  #curl -X POST http://localhost:11003/cleaning/basic
+

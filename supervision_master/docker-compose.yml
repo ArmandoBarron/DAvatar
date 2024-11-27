@@ -1,0 +1,185 @@
+version: '3.4'
+
+services:
+  cadvisor:
+    privileged: true # for CentOS
+    image: google/cadvisor:v0.33.0
+    #image: gcr.io/cadvisor/cadvisor:v0.49.1 # latest
+    container_name: cadvisor
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro # for Ubuntu
+      #- /mnt/aqui/:/rootfs/var/lib/docker:ro # for wsl only
+      - /dev/disk/:/dev/disk:ro # for v0.37
+      - /cgroup:/cgroup:ro # for CentOS, doesn't work on MacOS
+    devices:
+      - /dev/kmsg:/dev/kmsg # for v0.37
+    expose:
+      - 8080
+    ports:
+      - "8081:8080"
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  datacube:
+    image: mongo:4.2.3
+    command: mongod --config /etc/mongod.conf
+    restart: unless-stopped
+    volumes:
+      - ./mongo/mongod.conf:/etc/mongod.conf
+      - db-data:/data/db # save data in a docker volume
+      # - ./mongo/data:/data/db # save data in specific path
+      # - ./mongo/config:/data/configdb # metadata for a sharded cluster
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: user
+    #   MONGO_INITDB_ROOT_PASSWORD: pwd
+    #   MONGO_INITDB_DATABASE: db
+    ports:
+      - 27019:27019
+    # expose:
+    #   - 27019
+    networks: 
+      - monitor-net
+  
+  solution_mgr:
+  #monitoring:
+    build: ./0_solutionmanager
+    tty: true
+    command: python run.py
+    restart: unless-stopped
+    volumes:
+      - ./0_solutionmanager/src:/home
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+      - 22000:5000
+    environment:
+      INDEXING_HOST: indexing
+      INDEXING_PORT: 5000
+      MONITORING_HOST: monitoring
+      MONITORING_PORT: 5000
+      REPRESENTATION_HOST: representation
+      REPRESENTATION_PORT: 5000
+      DIAGNOSIS_HOST: diagnosis
+      DIAGNOSIS_PORT: 5000
+      FLAG_CALCULATE_TIMES: ${CALCULATE_TIMES:-0}
+    depends_on:
+      - indexing
+    networks: 
+      - monitor-net
+
+  monitoring:
+    build: ./1_monitoring
+    tty: true
+    command: python run.py
+    restart: unless-stopped
+    volumes:
+      - ./1_monitoring/src:/home
+    ports:
+      - 22001:5000
+    environment:
+      INDEXING_HOST: indexing
+      INDEXING_PORT: 5000
+      MONITORING_HOST: monitoring
+      MONITORING_PORT: 22001
+      SOLUTION_MGR_HOST: solution_mgr
+      SOLUTION_MGR_PORT: 5000
+      DIAGNOSIS_HOST: diagnosis
+      DIAGNOSIS_PORT: 5000
+      LOCALHOST_IP: ${LOCALHOST_IP:-cadvisor}
+      LOCALHOST_PORT: ${LOCALHOST_PORT:-8080}
+      LOCALHOST_ID: 0
+      FLAG_CALCULATE_TIMES: ${CALCULATE_TIMES:-0}
+    depends_on:
+      - indexing
+    networks: 
+      - monitor-net
+
+  indexing:
+    build: ./2_indexing
+    tty: true
+    command: python run.py
+    restart: unless-stopped
+    volumes:
+      - ./2_indexing/src:/home
+    ports:
+      - 22002:5000
+    environment:
+      DB_HOST: datacube
+      DB_PORT: 27019
+      FLAG_CALCULATE_TIMES: ${CALCULATE_TIMES:-0}
+    depends_on:
+      - datacube
+    networks: 
+      - monitor-net
+
+  representation:
+    build: ./3_representation
+    tty: true
+    command: python run.py
+    restart: unless-stopped
+    volumes:
+      - ./3_representation/src:/home
+    ports:
+      - 22003:5000
+    environment:
+      INDEXING_HOST: indexing
+      INDEXING_PORT: 5000
+      FLAG_CALCULATE_TIMES: ${CALCULATE_TIMES:-0}
+      FLAG_SAVE_DATASETS: ${SAVE_DATASETS:-0}
+    depends_on:
+      - indexing
+    networks: 
+      - monitor-net
+  
+  diagnosis:
+    build: ./4_diagnosis
+    tty: true
+    command: python run.py
+    restart: unless-stopped
+    volumes:
+      - ./4_diagnosis/src:/home
+    ports:
+      - 22004:5000
+    environment:
+      INDEXING_HOST: indexing
+      INDEXING_PORT: 5000
+      REPRESENTATION_HOST: representation
+      REPRESENTATION_PORT: 5000
+      DB_HOST: datacube
+      DB_PORT: 27019
+      FLAG_CALCULATE_TIMES: ${CALCULATE_TIMES:-0}
+      FLAG_SAVE_DATASETS: ${SAVE_DATASETS:-0}
+    depends_on:
+      - datacube
+    networks: 
+      - monitor-net
+
+  web:
+    build: ./web
+    tty: true
+    command: python run.py
+    restart: unless-stopped
+    ports:
+      - 22005:5000
+    volumes:
+      - ./web/src:/home
+    depends_on:
+      - indexing
+      - monitoring
+      #- solution_mgr
+      - diagnosis
+      - representation
+    networks: 
+      - monitor-net
+
+networks: 
+  monitor-net:
+    driver: bridge
+
+volumes:
+  db-data: {}

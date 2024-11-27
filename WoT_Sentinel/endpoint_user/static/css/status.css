@@ -1,0 +1,33 @@
+svg {
+  width: 80vw;
+  height: 50vh;
+  /* background-color: blue; */
+}
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+path.link-low {
+  stroke: rgb(33, 180, 58);
+}
+
+path.link-medium {
+  stroke: rgb(180, 116, 33);
+}
+
+path.link-high {
+  stroke: rgb(180, 33, 33);
+}
+
+path.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}

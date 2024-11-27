@@ -1,0 +1,328 @@
+version: '3.4'
+services:
+  ex_manager: #API Gatewaey THE MANAGER
+    container_name: ex_manager
+    build:
+      context: ./TPS/Manager/
+      dockerfile: ./Dockerfile
+    environment:      
+      CONFIGPATH: ./CONFIG/ #configuration location
+      SCHEMAPATH: ./SCHEMA/ #data location
+      DATABASE: mongodb #database
+      CENTINEL: none #master watcher (must be active)
+    volumes:
+      - ./TPS/Manager/:/home/ #for debugging
+      - ./TPS/:/home/CONFIG/
+      #- ./TEST/:/home/SCHEMA/
+      #- /tmp/pruebas/TPSSCHEMA/:/home/SCHEMA/ #workflow dagon schema
+    ports:
+      - "64350:5000"
+    expose:
+      - "5000"
+      - "64350"
+    restart: always
+    #networks:
+    #  - wot_net
+
+  #ex_mongodb: # tps manager mongoDB
+  #  container_name: ex_db_data
+  #  image: mongo:latest
+  #  restart: always
+  #  environment:
+  #    data-volume: /data/db
+  #    MONGO_INITDB_DATABASE: TPS_Data
+  #  volumes:
+  #    - data-volume:/data/db
+      #- ./Configuration/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    #networks:
+    #  - wot_net
+  #  depends_on:
+  #    - ex_manager
+  #  ports:
+  #    - "67017:27017"
+
+################# TOOLS SERVICES ############################
+  # dagon_service: #API Gatewaey
+  #   build:
+  #     context: ./DagonService
+  #     dockerfile: ./Dockerfile
+  #   environment:      
+  #     MONGO_DB: dagon_mongodb #ip for the services
+  #   ports:
+  #     - "57000:5000"
+  #   restart: always
+  #   networks:
+  #     - TPS_net
+
+  # dagon_mongodb: #mongoDB
+  #   image: mongo:latest
+  #   restart: always
+  #   environment:
+  #     data-volume: /data/db
+  #   volumes:
+  #     - dagonservice-db-volume:/data/db
+  #   networks:
+  #     - TPS_net
+  #   depends_on:
+  #     - dagon_service
+
+  # dagsink_mongodb: # MONITOR
+  #   container_name: DB_dagsink
+  #   image: mongo:latest
+  #   restart: always
+  #   environment:
+  #     dagsink-db-volume: /data/db
+  #   volumes:
+  #     - dagsink-db-volume:/data/db
+  #   networks:
+  #     - TPS_net
+
+  # dagsink: #dagsink mongoDB
+  #   container_name: Monitor_dagsink
+  #   image: dagsink
+  #   build:
+  #     context: ./Dagsink
+  #     dockerfile: ./Dockerfile
+  #   restart: always
+  #   environment:
+  #     MONGO_DB: dagsink_mongodb
+  #   networks:
+  #     - TPS_net
+  #   ports:
+  #     - 9800:9800
+  
+  # ftpd-publisher: #ftp service (data transportation)
+  #   container_name: ftpd-publisher
+  #   image: stilliard/pure-ftpd:hardened
+  #   network_mode: host
+  #   ports:
+  #     - 21:21
+  #     - 20:20
+  #     - 30000-30100:30000-30100
+  #   volumes:
+  #     - '$FTP_PUBLISHED_FOLDER/:$FTP_PUBLISHED_FOLDER/'
+  #     #- '/tmp/pruebas/config/:/etc/pure-ftpd/passwd'
+  #   environment:
+  #     PUBLICHOST: "$FTP_HOST_LOCATED"
+  #     FTP_USER_NAME: guess
+  #     FTP_USER_PASS: guess
+  #     FTP_USER_HOME: $FTP_PUBLISHED_FOLDER
+  #     FTP_MAX_CONNECTIONS: 50
+  #     FTP_MAX_CLIENTS: 50
+  #     FTP_PASSIVE_PORTS: "30000:30100"
+  #   restart: always
+
+####################### SERVICES ######################
+  ex_clustering: # API Gateway container
+    container_name: ex_clustering
+    #image: 127.0.0.1:5000/meteots_clustering_w1
+    build:
+      context: ./TPS/Services/Clustering
+      dockerfile: ./Dockerfile
+    #networks:
+    #  - wot_net
+    restart: always
+    ports:
+      - 21001:80
+    expose:
+      #- "11001"
+      - "80"
+    depends_on:
+      - ex_manager
+
+  ex_summary: # summary
+    container_name: ex_summary
+    build:
+      context: ./TPS/Services/Summary/
+      dockerfile: ./Dockerfile
+    restart: always
+    #networks:
+    #  - wot_net
+    depends_on:
+      - ex_manager
+    ports:
+      - 21002:80
+    expose:
+      #- "11002"
+      - "80"
+
+  ex_clusteringtools: # tools
+    container_name: ex_clustering_tools
+    build:
+      context: ./TPS/Services/ClusterAnalysis/
+      dockerfile: ./Dockerfile
+    restart: always
+#    networks:
+    #  - wot_net
+    ports:
+      - 4131:80
+    expose:
+      #- "3131"
+      - "80"
+    depends_on:
+      - ex_manager
+
+  ex_cleaningtools: # tools to clean data
+    container_name: ex_cleaning_tools
+    #image: 127.0.0.1:5000/TPS_cleaning_tools
+    build:
+      context: ./TPS/Services/CleaningTools
+      dockerfile: ./Dockerfile
+    #networks:
+    #  - wot_net
+    ports:
+      - 21003:80
+    expose:
+      #- "11003"
+      - "80"
+    depends_on:
+        - ex_manager
+
+    restart: always
+
+  ex_graphics: # service to graphic data
+    container_name: ex_graphics
+    #image: 127.0.0.1:5000/TPS_cleaning_tools
+    build:
+      context: ./TPS/Services/Graficas
+      dockerfile: ./Dockerfile
+    #networks:
+    #  - wot_net
+    ports:
+      #- 3132:80
+      - 21005:80
+    expose:
+      #- "11005"
+      - "80"
+    depends_on:
+        - ex_manager
+    restart: always
+
+  #api-sc:
+  #  build:
+  #    context: .
+  #  tty: true
+  #  command: python api-studycase.py
+  #  restart: always
+  #  volumes:
+  #    - ./STUDY-CASE:/home
+  #  networks:
+  #    - TPS_net
+  #  ports:
+  #    - 54351:5000
+      # - 52011:5000
+      # - 5001:5000
+    #environment:
+      #LOCALHOST: ${LOCALHOST:-127.0.0.1}
+      #LOCALHOST: ${LOCALHOST:-0.0.0.0}
+      # LOCALPORT: 5200
+
+networks: 
+  default: 
+    external: 
+      name: wot_net
+
+volumes:
+  data-volume:
+  # dagsink-db-volume:
+  # dagonservice-db-volume:
+
+
+
+x-model-solution:
+  title: TPS
+  description: Los TPS son microservicios para el procesamiento de datos provenientes de una o varias etapas dentro de flujos de trabajo. Para que sea considerado un TPS este debe seguir un efoque de procesamiento ETL (Extract-Transform-Load), mantener las caracteristicas de un microservicio (Escalabilidad, Modularidad, independiente, autocontenido, etc.), y ser capaz de ser desplegado en diferentes infraestructuras de computo.
+  structure:
+  x-services:
+    tps_manager:
+      description: API Gateway and the manager
+      input:
+        description: Shows the input of the Thing
+        elements:
+      output:
+        description: Shows the output of the Thing
+        elements:
+      functions:
+    mongodb:
+      description: Database of tps manager
+      input:
+        description: Shows the input of the Thing
+        elements:
+      output:
+        description: Shows the output of the Thing
+        elements:
+      functions:
+    clustering:
+      description: API Gateway container
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - method: '{http_method}'
+          - query: http://localhost:11001/api/v1/{option}
+      output:
+        description: Shows the output of the Thing
+        elements:
+      functions:
+        Kmeans: (Presente en dislib) Realiza el agrupamiento de los datos utilizando el algoritmo kmeans. Se agrega una etiqueta de clase (class) a cada registro.
+        Hierarchical_clustering: Realiza el agrupamiento de los datos utilizando un algoritmo jerárquico.
+        Silhouette: Realiza una comparativa entre los algoritmos de kmeans y jerárquico con el metodo single, comprobando valores de k de 1 a 15. El resultado de las pruebas se grafica.
+    summary:
+      description: TPS para la obtencion de datos estadisticos programado en lenguaje R, el cual puede ser accedido a traves de peticiones rest.
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - method: '{http_method}'
+          - query: http://localhost:11002/api/v1/{option}
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - response: '{response}'
+      functions:
+        correlation:
+          - Obtiene la varianza, covarianza, y coeficiente de correlacion de un dataset.
+          - POST http://localhost:11002/api/v1/correlation
+        covariance:
+          - Calcula la covarianza de al menos 2 variables dentro de un dataset.
+          - POST http://localhost:11002/api/v1/covariance
+        describe:
+          - Realiza una descripcion estadistica de un dataset mediante el calculo de medidas de tendencia central.
+          - POST http://localhost:11002/api/v1/describe
+    clusteringtools:
+      description: TPS con algoritmos de agrupamiento de datos.
+      input:
+        description: Shows the input of the Thing
+        elements:
+          - method: '{http_method}'
+          - query: http://localhost:11001/{option}
+      output:
+        description: Shows the output of the Thing
+        elements:
+          - response: '{response}'
+      functions:
+        kmeans:
+          - Realiza el agrupamiento de los datos utilizando el algoritmo kmeans. Se agrega una etiqueta de clase (class) a cada registro.
+          - POST http://localhost:11001/kmeans
+        hierarchical:
+          - Realiza el agrupamiento de los datos utilizando un algoritmo jerárquico.
+          - POST http://localhost:11001/herarhical
+        silhouette:
+          - Realiza una comparativa entre los algoritmos de kmeans y jerárquico con el metodo single, comprobando valores de k de 1 a 15. El resultado de las pruebas se grafica.
+          - POST http://localhost:11001/silhouette
+    cleaningtools:
+      description: tools to clean data
+      input:
+        description: Shows the input of the Thing
+        elements:
+      output:
+        description: Shows the output of the Thing
+        elements:
+      functions:
+    graphics:
+      description: service to graphic data
+      input:
+        description: Shows the input of the Thing
+        elements:
+      output:
+        description: Shows the output of the Thing
+        elements:
+      functions:
